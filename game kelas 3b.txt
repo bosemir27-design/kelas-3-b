@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pusat Game Edukasi Kelas 3B - SDN Bahagia 03</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            width: 100%;
+            max-width: 600px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            overflow: hidden;
+            padding: 30px;
+            text-align: center;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        p {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .xp-badge {
+            background: #f1c40f;
+            color: #2c3e50;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        .progres-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .card:hover {
+            border-color: #43e97b;
+            background: #f1f9f5;
+            transform: translateY(-2px);
+        }
+        h3 {
+            color: #34495e;
+            margin-bottom: 5px;
+        }
+        .btn-pilihan {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .btn-pilihan:hover:not([disabled]) {
+            background: #f8f9fa;
+            border-color: #ccc;
+        }
+        .betul {
+            background: #d4edda !important;
+            border-color: #28a745 !important;
+            color: #155724;
+            font-weight: bold;
+        }
+        .salah {
+            background: #f8d7da !important;
+            border-color: #dc3545 !important;
+            color: #721c24;
+        }
+        .btn {
+            background: #43e97b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .btn:hover {
+            background: #38d46d;
+        }
+        .hidden {
+            display: none;
+        }
+        .hasil-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- MENU UTAMA -->
+    <div class="container" id="main-menu">
+        <h1>🎮 Pusat Game Edukasi Kelas 3B</h1>
+        <div class="xp-badge">⭐ Total XP Kamu: <span id="total-xp">0</span></div>
+        <p>Pilih Mata Pelajaran untuk Belajar Sambil Bermain!</p>
+        
+        <div class="card" onclick="mulaiKuis('IPAS')">
+            <h3>🌿 IPAS (Ilmu Pengetahuan Alam & Sosial)</h3>
+            <p>Materi: Wujud Benda & Perkembangbiakan Hewan</p>
+        </div>
+        <div class="card" onclick="mulaiKuis('Matematika')">
+            <h3>📐 Matematika</h3>
+            <p>Materi: Perkalian & Operasi Hitung Bilangan</p>
+        </div>
+        <div class="card" onclick="mulaiKuis('Bahasa Indonesia')">
+            <h3>📖 Bahasa Indonesia</h3>
+            <p>Materi: Sinonim & Kosakata Baku</p>
+        </div>
+        <div class="card" onclick="mulaiKuis('PPKn')">
+            <h3>🇮🇩 PPKn</h3>
+            <p>Materi: Simbol & Penerapan Nilai Pancasila</p>
+        </div>
+    </div>
+
+    <!-- AREA GAME/KUIS -->
+    <div class="container hidden" id="game-area">
+        <h1 id="title-mapel"></h1>
+        
+        <div class="progres-info">
+            <span id="no-soal-info">Soal 1 dari 3</span>
+            <span id="sesi-xp-info">+0 XP Sesi Ini</span>
+        </div>
+        
+        <div style="background: #eef2f7; padding: 20px; border-radius: 10px; margin-bottom: 20px; text-align: left;">
+            <h3 id="soal-teks" style="margin-bottom: 15px;">Pertanyaan akan muncul di sini...</h3>
+            <div id="pilihan-jawaban"></div>
+        </div>
+        
+        <button class="btn hidden" id="btn-lanjut" onclick="soalBerikutnya()">Lanjut ke Soal Berikutnya ➡️</button>
+        <button class="btn" style="background:#95a5a6" onclick="kembaliKeMenu()">⬅️ Keluar Game</button>
+    </div>
+
+    <!-- TAMPILAN SELESAI / SCOREBOARD -->
+    <div class="container hidden" id="score-area">
+        <h1>🎉 Kuis Selesai! 🎉</h1>
+        <p>Kerja bagus! Kamu telah menyelesaikan tantangan belajar.</p>
+        
+        <div class="hasil-box">
+            <h2>Total XP Diperoleh: <span id="hasil-xp" style="color: #f1c40f;">0</span> XP</h2>
+            <p style="margin-top: 10px; font-weight: bold;" id="pesan-kelulusan"></p>
+        </div>
+        
+        <button class="btn" onclick="kembaliKeMenu()">Main Lagi di Menu Utama 🏠</button>
+    </div>
+
+    <script>
+        // State Game Global
+        let totalSkorXP = 0;
+        let mapelAktif = '';
+        let indeksSoalAktif = 0;
+        let skorSesiIni = 0;
+
+        // Generator Efek Suara (Menggunakan Web Audio API internal browser)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function mainkanSuara(jenis) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            if (jenis === 'benar') {
+                osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // Nada D5
+                osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.1);  // Nada A5
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            } else if (jenis === 'salah') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.25);
+            }
+        }
+
+        // Database Multi-Soal (Masing-masing 3 soal)
+        const databaseSoal = {
+            'IPAS': [
+                { soal: 'Hewan yang bernapas menggunakan insang adalah...', pilihan: ['A. Kucing', 'B. Ikan', 'C. Burung', 'D. Sapi'], jawabanBenar: 1 },
+                { soal: 'Benda yang memiliki bentuk tetap dan tidak mengikuti wadahnya adalah...', pilihan: ['A. Air', 'B. Minyak', 'C. Batu', 'D. Asap'], jawabanBenar: 2 },
+                { soal: 'Tumbuhan hijau membuat makanannya sendiri melalui proses...', pilihan: ['A. Fotosintesis', 'B. Memasak', 'C. Penguapan', 'D. Pernapasan'], jawabanBenar: 0 }
+            ],
+            'Matematika': [
+                { soal: 'Berapakah hasil dari 15 × 3 ?', pilihan: ['A. 35', 'B. 40', 'C. 45', 'D. 50'], jawabanBenar: 2 },
+                { soal: 'Angka 8 pada bilangan 4.825 menempati nilai tempat...', pilihan: ['A. Satuan', 'B. Puluhan', 'C. Ratusan', 'D. Ribuan'], jawabanBenar: 2 },
+                { soal: 'Ibu membeli 4 kotak kue. Setiap kotak berisi 6 kue. Berapa total kue Ibu?', pilihan: ['A. 20 kue', 'B. 24 kue', 'C. 28 kue', 'D. 30 kue'], jawabanBenar: 1 }
+            ],
+            'Bahasa Indonesia': [
+                { soal: 'Persamaan kata (sinonim) dari kata "Rajin" adalah...', pilihan: ['A. Malas', 'B. Giat', 'C. Lambat', 'D. Bodoh'], jawabanBenar: 1 },
+                { soal: 'Lawan kata (antonim) dari kata "Luas" adalah...', pilihan: ['A. Sempit', 'B. Lebar', 'C. Besar', 'D. Jauh'], jawabanBenar: 0 },
+                { soal: 'Penulisan huruf kapital yang tepat di bawah ini adalah...', pilihan: ['A. saya suka bandung', 'B. Saya Suka Bandung', 'C. Saya suka Bandung', 'D. saya suka Bandung'], jawabanBenar: 2 }
+            ],
+            'PPKn': [
+                { soal: 'Sila ke-3 Pancasila dilambangkan dengan gambar...', pilihan: ['A. Bintang', 'B. Rantai', 'C. Pohon Beringin', 'D. Kepala Banteng'], jawabanBenar: 2 },
+                { soal: 'Menjaga kebersihan ruang kelas merupakan contoh ... siswa di sekolah.', pilihan: ['A. Hak', 'B. Kewajiban', 'C. Hadiah', 'D. Hobi'], jawabanBenar: 1 },
+                { soal: 'Saat ada teman menyampaikan pendapat di musyawarah kelas, sikap kita adalah...', pilihan: ['A. Memotong pembicaraannya', 'B. Mendengarkan dengan baik', 'C. Mengobrol sendiri', 'D. Meninggalkan ruangan'], jawabanBenar: 1 }
+            ]
+        };
+
+        function mulaiKuis(mapel) {
+            mapelAktif = mapel;
+            indeksSoalAktif = 0;
+            skorSesiIni = 0;
+            
+Gunakan kode dengan hati-hati.
+document.getElementById('main-menu').classList.add('hidden');
+document.getElementById('score-area').classList.add('hidden');
+document.getElementById('game-area').classList.remove('hidden');
+document.getElementById('title-mapel').innerText = ✨ Kuis ${mapel} Kelas 3;
+tampilkanSoal();
+}
+function tampilkanSoal() {
+document.getElementById('btn-lanjut').classList.add('hidden');
+const listSoal = databaseSoal[mapelAktif];
+const dataSoal = listSoal[indeksSoalAktif];
+// Perbarui teks info progres soal
+document.getElementById('no-soal-info').innerText = Soal ${indeksSoalAktif + 1} dari ${listSoal.length};
+document.getElementById('sesi-xp-info').innerText = +${skorSesiIni} XP Sesi Ini;
+document.getElementById('soal-teks').innerText = dataSoal.soal;
+let htmlPilihan = '';
+dataSoal.pilihan.forEach((pil, index) => {
+htmlPilihan += <button class="btn-pilihan" id="pil-${index}" onclick="cekJawaban(${index}, ${dataSoal.jawabanBenar})">${pil}</button>;
+});
+document.getElementById('pilihan-jawaban').innerHTML = htmlPilihan;
+}
+function cekJawaban(pilihanUser, jawabanBenar) {
+const semuaTombol = document.querySelectorAll('.btn-pilihan');
+semuaTombol.forEach(tombol => tombol.disabled = true);
+if (pilihanUser === jawabanBenar) {
+document.getElementById(pil-${pilihanUser}).classList.add('betul');
+mainkanSuara('benar');
+skorSesiIni += 10;
+totalSkorXP += 10;
+document.getElementById('sesi-xp-info').innerText = +${skorSesiIni} XP Sesi Ini;
+document.getElementById('total-xp').innerText = totalSkorXP;
+} else {
+document.getElementById(pil-${pilihanUser}).classList.add('salah');
+document.getElementById(pil-${jawabanBenar}).classList.add('betul');
+mainkanSuara('salah');
+}
+document.getElementById('btn-lanjut').classList.remove('hidden');
+}
+function soalBerikutnya() {
+indeksSoalAktif++;
+const listSoal = databaseSoal[mapelAktif];
+if (indeksSoalAktif < listSoal.length) {
+tampilkanSoal();
+} else {
+selesaiKuis();
+}
+}
+function selesaiKuis() {
+document.getElementById('game-area').classList.add('hidden');
+document.getElementById('score-area').classList.remove('hidden');
+document.getElementById('hasil-xp').innerText = skorSesiIni;
+let pesan = '';
+if (skorSesiIni === 30) {
+pesan = '🏆 HEBAT! Semua jawaban kamu benar! Kamu dapat predikat Bintang Kelas! ⭐';
+} else if (skorSesiIni >= 10) {
+pesan = '👍 Keren! Kamu belajar dengan baik. Tingkatkan lagi ya!';
+} else {
+pesan = '📚 Jangan berkecil hati. Ayo coba lagi dan belajar lebih giat!';
+}
+document.getElementById('pesan-kelulusan').innerText = pesan;
+}
+function kembaliKeMenu() {
+document.getElementById('game-area').classList.add('hidden');
+document.getElementById('score-area').classList.add('hidden');
+document.getElementById('main-menu').classList.remove('hidden');
+}
